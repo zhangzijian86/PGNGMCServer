@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.gson.Gson;
-import com.ngmc.bean.Pgdr_user;
+import com.ngmc.bean.Pgdr_User;
 import com.ngmc.dao.DaoImpl;
 import com.ngmc.json.JsonUtil;
 import com.sun.org.apache.xalan.internal.xsltc.compiler.sym;
@@ -38,8 +38,8 @@ public class Register extends HttpServlet {
 		String jsondata=request.getParameter("jsonstring");
 		JsonUtil jsonUtil=new JsonUtil();
 		System.out.println(jsondata);
-		List<Pgdr_user> list=jsonUtil.StringFromJson(jsondata);
-		Pgdr_user pgdr_user=list.get(0);
+		List<Pgdr_User> list=jsonUtil.StringFromJson(jsondata);
+		Pgdr_User pgdr_user=list.get(0);
 	    System.out.println(pgdr_user.getUser_mobile());
 		DaoImpl userDaoImpl=new DaoImpl();
 		boolean b=userDaoImpl.register(pgdr_user);

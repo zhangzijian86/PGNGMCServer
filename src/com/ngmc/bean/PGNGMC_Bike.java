@@ -7,7 +7,9 @@ public class PGNGMC_Bike {
 	 private String BIKE_EnableDate;//  '启用日期'
 	 private String BIKE_Company;//  '公司（生产）'
 	 private String BIKE_Status;//  '自行车状态(0,正常 1,保修 2,维修 -1,报废)'
-	 private String BIKE_Type;//  '自行车状态(0,山地 1,普通 )'
+	 private String BIKE_Type;//  '自行车状态(0,山地 1,普通 )'	
+	 private String POSITION_X;// '位置X' longitude
+	 private String POSITION_Y;// '位置Y' latitude
 	 
 	 //select BIKE_ID,BIKE_Code,BIKE_EnableDate,BIKE_Company,BIKE_Status,BIKE_Type from PG_BIKE;
 	
@@ -46,5 +48,17 @@ public class PGNGMC_Bike {
 	}
 	public void setBIKE_Type(String bIKE_Type) {
 		BIKE_Type = bIKE_Type;
+	}
+	public String getPOSITION_X() {
+		return POSITION_X;
+	}
+	public void setPOSITION_X(String pOSITION_X) {
+		POSITION_X = pOSITION_X;
+	}
+	public String getPOSITION_Y() {
+		return POSITION_Y;
+	}
+	public void setPOSITION_Y(String pOSITION_Y) {
+		POSITION_Y = pOSITION_Y;
 	}
 }

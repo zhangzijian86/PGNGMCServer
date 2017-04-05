@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.gson.Gson;
-import com.ngmc.bean.Pgdr_user;
+import com.ngmc.bean.Pgdr_User;
 import com.ngmc.dao.DaoImpl;
 
 @SuppressWarnings("serial")
@@ -37,8 +37,8 @@ public class Login extends HttpServlet {
 		System.out.println("====doPost=============usermobile======"+usermobile);
 //		out.write("登录成功==1="+password); 
 		DaoImpl userDaoImpl=new DaoImpl();
-		Pgdr_user puser=userDaoImpl.login(usermobile);
-		List<Pgdr_user> list1=new ArrayList<Pgdr_user>();
+		Pgdr_User puser=userDaoImpl.login(usermobile);
+		List<Pgdr_User> list1=new ArrayList<Pgdr_User>();
 		Gson gson=new Gson();//利用google提供的gson将一个list集合写成json形式的字符串		
 		list1.add(puser);
 		String jsonstring=gson.toJson(list1);

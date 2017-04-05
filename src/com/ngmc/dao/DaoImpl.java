@@ -8,8 +8,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ngmc.bean.PGNGMC_Bike;
 import com.ngmc.bean.PGNGMC_Bike_Position;
-import com.ngmc.bean.Pgdr_user;
+import com.ngmc.bean.Pgdr_User;
 import com.ngmc.db.GetConn;
 
 
@@ -17,51 +18,79 @@ import com.ngmc.db.GetConn;
 public class DaoImpl 
 {
 	
-	public List<PGNGMC_Bike_Position> GetBikeByPosition(String latitude,String longitude) 
+	public List<PGNGMC_Bike> GetBikeByPosition(String latitude,String longitude) 
 	{
+		//double longitude=116.649794;
+		//double latitude=40.14439;
+		double r = 6371;//地球半径千米  
+	    double dis = 0.5;//0.5千米距离  
+	    double dlng =  2*Math.asin(Math.sin(dis/(2*r))/Math.cos(Double.valueOf(latitude)*Math.PI/180));  
+	    dlng = dlng*180/Math.PI;//角度转为弧度  
+	    double dlat = dis/r;  
+	    dlat = dlat*180/Math.PI;          
+	    double minlat =Double.valueOf(latitude) - dlat;  
+		double maxlat = Double.valueOf(latitude) + dlat;  
+	    double minlng = Double.valueOf(longitude) - dlng;  
+		double maxlng = Double.valueOf(longitude) + dlng;   
+		// TODO Auto-generated method stub
 		GetConn getConn=new GetConn();
 		ResultSet rs = null;
 		Connection conn=getConn.getConnection();
-		List<PGNGMC_Bike_Position> PGBP_List = new ArrayList<PGNGMC_Bike_Position>();			
+		List<PGNGMC_Bike> PGB_List = new ArrayList<PGNGMC_Bike>();			
 		try {
 			PreparedStatement ps=conn.prepareStatement(
-					  "select "
-					+ "PRICE_ID,PRICE_NAME,PRICE_ISVALID,"
-					+ "PRICE_TYPE,PRICE_PRICE,PRICE_EXPLAIN " 
-					+ "from PGDR_PRICE where PRICE_TYPE=?  and PRICE_ISVALID = 1"
-					);
+			"select BIKE_ID,BIKE_Code,DATE_FORMAT(BIKE_EnableDate,'%Y-%m-%d') as BIKE_EnableDate,BIKE_Company,BIKE_Status,BIKE_Type,Result1.POSITION_X,"
+			+ "Result1.POSITION_Y from ("
+			+ "select POSITION_BIKE_ID,POSITION_X,POSITION_Y from ("
+			+ "select POSITION_ID,max(POSITION_RecordDate),POSITION_X,POSITION_Y,POSITION_BIKE_ID "
+			+ "from PG_BIKE_POSITION " 
+			+ "group by POSITION_BIKE_ID ) Result "
+			+ "where Result.POSITION_X>? and Result.POSITION_X <? and Result.POSITION_Y>? and Result.POSITION_Y<? ) Result1 "
+			+ "inner join PG_BIKE on Result1.POSITION_BIKE_ID = BIKE_ID where BIKE_Status = 0;");
 			
 			//select POSITION_ID,POSITION_Code,POSITION_X,POSITION_Y,POSITION_RecordDate,POSITION_BIKE_ID
-			//from PG_BIKE_POSITION;
-			
+			//from PG_BIKE_POSITION;"
+			ps.setDouble(1,minlng);
+			ps.setDouble(2,maxlng);
+			ps.setDouble(3,minlat);
+			ps.setDouble(4,maxlat);		
 			System.out.println("=getPrice=sql="+ps.toString());
 			rs=ps.executeQuery();
 			while (rs.next())
 			{
-				PGNGMC_Bike_Position PGBP = new PGNGMC_Bike_Position();
-				PGBP.setPOSITION_ID(rs.getString("POSITION_ID"));
-				PGBP.setPOSITION_Code(rs.getString("POSITION_Code"));
-				PGBP.setPOSITION_X(rs.getString("POSITION_X"));
-				PGBP.setPOSITION_Y(rs.getString("POSITION_Y"));
-				PGBP.setPOSITION_RecordDate(rs.getString("POSITION_RecordDate"));
-				PGBP.setPOSITION_BIKE_ID(rs.getString("POSITION_BIKE_ID"));
-				PGBP_List.add(PGBP);
+				PGNGMC_Bike PGB = new PGNGMC_Bike();
+				PGB.setBIKE_ID(rs.getString("BIKE_ID"));
+				PGB.setBIKE_Code(rs.getString("BIKE_Code"));
+				PGB.setBIKE_EnableDate(rs.getString("BIKE_EnableDate"));
+				PGB.setBIKE_Company(rs.getString("BIKE_Company"));
+				PGB.setBIKE_Status(rs.getString("BIKE_Status"));
+				PGB.setBIKE_Type(rs.getString("BIKE_Type"));
+				PGB.setPOSITION_X(rs.getString("POSITION_X"));
+				PGB.setPOSITION_Y(rs.getString("POSITION_Y"));
+				System.out.println("=BIKE_ID="+rs.getString("BIKE_ID"));
+				System.out.println("=BIKE_Code="+rs.getString("BIKE_Code"));
+				System.out.println("=BIKE_EnableDate="+rs.getString("BIKE_EnableDate"));
+				System.out.println("=BIKE_Company="+rs.getString("BIKE_Company"));
+				System.out.println("=BIKE_Status="+rs.getString("BIKE_Status"));
+				System.out.println("=BIKE_Type="+rs.getString("BIKE_Type"));
+				System.out.println("=POSITION_X="+rs.getString("POSITION_X"));
+				System.out.println("=POSITION_Y="+rs.getString("POSITION_Y"));
+				PGB_List.add(PGB);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		System.out.println("=getRecycle==pdrlist==="+PGBP_List.size());
-		return PGBP_List;
+		return PGB_List;
 	}
 	
 	
-	public Pgdr_user login(String usermobile) 
+	public Pgdr_User login(String usermobile) 
 	{
 		boolean b = false;
 		GetConn getConn=new GetConn();
 		ResultSet rs = null;
 		Connection conn=getConn.getConnection();
-		Pgdr_user puser = new Pgdr_user();
+		Pgdr_User puser = new Pgdr_User();
 		try {
 			PreparedStatement ps=conn.prepareStatement("select USER_ID,USER_MOBILE,USER_NAME,USER_PASSWORD"
 					+ ",USER_ADDRESS,USER_EMAIL,USER_STATUS,USER_TYPE,USER_PHOTO"
@@ -209,7 +238,7 @@ public class DaoImpl
 //		return pdrlist;
 //	}
 	
-	public boolean register(Pgdr_user pgdr_user)
+	public boolean register(Pgdr_User pgdr_user)
 	{
 		boolean b=false;
 		GetConn getConn=new GetConn();
@@ -235,7 +264,7 @@ public class DaoImpl
 		return b;		
 	}
 	
-	public boolean updateUser(Pgdr_user pgdr_user)
+	public boolean updateUser(Pgdr_User pgdr_user)
 	{
 		System.out.println("====UpdateUser=============33======");
 		boolean b=false;
@@ -427,9 +456,9 @@ public class DaoImpl
 //		return b;		
 //	}
 	
-	public List<Pgdr_user> selectAlluser ()
+	public List<Pgdr_User> selectAlluser ()
 	{
-		List<Pgdr_user> list=new ArrayList<Pgdr_user>();
+		List<Pgdr_User> list=new ArrayList<Pgdr_User>();
 		GetConn getConn=new GetConn();	
 		Connection conn=getConn.getConnection();
 		try {
@@ -437,7 +466,7 @@ public class DaoImpl
             ResultSet rs = ps.executeQuery();
             while (rs.next()) 
             {
-            	Pgdr_user user=new Pgdr_user();
+            	Pgdr_User user=new Pgdr_User();
 				user.setUser_mobile(rs.getString(1));
 				list.add(user);
 			}

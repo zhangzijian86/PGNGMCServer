@@ -11,8 +11,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.gson.Gson;
+import com.ngmc.bean.PGNGMC_Bike;
 import com.ngmc.bean.PGNGMC_Bike_Position;
-import com.ngmc.bean.Pgdr_user;
+import com.ngmc.bean.Pgdr_User;
 import com.ngmc.dao.DaoImpl;
 
 @SuppressWarnings("serial")
@@ -35,9 +36,9 @@ public class GetBikeByPosition extends HttpServlet {
 		String latitude=request.getParameter("latitude");		
 		String longitude=request.getParameter("longitude");		
 		DaoImpl userDaoImpl=new DaoImpl();
-		List<PGNGMC_Bike_Position> PGBP_List=userDaoImpl.GetBikeByPosition(latitude,longitude);
+		List<PGNGMC_Bike> PGB_List=userDaoImpl.GetBikeByPosition(latitude,longitude);
 		Gson gson=new Gson();
-		String jsonstring=gson.toJson(PGBP_List);
+		String jsonstring=gson.toJson(PGB_List);
 		System.out.println("======jsonstring========="+jsonstring);
 		out.write(jsonstring);
 		out.flush();

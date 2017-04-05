@@ -1,6 +1,6 @@
 package com.ngmc.bean;
 
-public class Pgdr_user {
+public class Pgdr_User {
 	
 	private String user_id;//USER_ID
 	private String user_name;//USER_NAME

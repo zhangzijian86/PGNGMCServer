@@ -8,25 +8,25 @@
     <description>This is the description of my J2EE component</description>
     <display-name>This is the display name of my J2EE component</display-name>
     <servlet-name>Login</servlet-name>
-    <servlet-class>com.pg.servlet.Login</servlet-class>
+    <servlet-class>com.ngmc.servlet.Login</servlet-class>
   </servlet>
   <servlet>
     <description>This is the description of my J2EE component</description>
     <display-name>This is the display name of my J2EE component</display-name>
     <servlet-name>Register</servlet-name>
-    <servlet-class>com.pg.servlet.Register</servlet-class>
+    <servlet-class>com.ngmc.servlet.Register</servlet-class>
   </servlet>
   <servlet>
     <description>This is the description of my J2EE component</description>
     <display-name>This is the display name of my J2EE component</display-name>
     <servlet-name>Check</servlet-name>
-    <servlet-class>com.pg.servlet.Check</servlet-class>
+    <servlet-class>com.ngmc.servlet.Check</servlet-class>
   </servlet>
   <servlet>
     <description>This is the description of my J2EE component</description>
     <display-name>This is the display name of my J2EE component</display-name>
     <servlet-name>GetBikeByPosition</servlet-name>
-    <servlet-class>com.pg.servlet.GetBikeByPosition</servlet-class>
+    <servlet-class>com.ngmc.servlet.GetBikeByPosition</servlet-class>
   </servlet>
 
   <servlet-mapping>
