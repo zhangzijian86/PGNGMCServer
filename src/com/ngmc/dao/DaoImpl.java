@@ -564,4 +564,46 @@ public class DaoImpl
 		return b;
 	}
 	
+	public String GetBikeStatus(String resultCode){
+		String result = "";
+		GetConn getConn=new GetConn();
+		ResultSet rs = null;
+		Connection conn=getConn.getConnection();
+		try {
+			PreparedStatement ps=conn.prepareStatement(
+					"select BIKE_ID,BIKE_Code,BIKE_EnableDate,"
+					+ "BIKE_Company,BIKE_Status,BIKE_LockStatus,BIKE_Type "
+					+ "from PG_BIKE where BIKE_Code = ?;");
+			ps.setString(1,resultCode);
+			rs=ps.executeQuery();
+			if (rs.next())
+			{
+				if(rs.getInt("BIKE_Status")==0){
+					if(rs.getInt("BIKE_LockStatus")==0){
+						result = "lock";
+					}else{
+						result = "unlock";
+					}
+				}
+				if(rs.getInt("BIKE_Status")==1){
+					result = "report";
+				}
+				if(rs.getInt("BIKE_Status")==2){
+					result = "repair";
+				}
+				if(rs.getInt("BIKE_Status")==-1){
+					result = "repair";
+				}
+			}
+			else 
+			{
+				result = "nobike";
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		getConn.closeconn(conn);
+		return result;
+	}
+	
 }
