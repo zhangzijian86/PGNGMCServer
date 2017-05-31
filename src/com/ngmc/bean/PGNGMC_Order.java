@@ -5,7 +5,7 @@ public class PGNGMC_Order {
 	private String ORDER_ID;          //订单ID
 	private String ORDER_Code;        //订单编码
 	private String USER_ID;           //用户ID
-	private String BIKE_ID;           //自行车ID
+	private String BIKE_CODE;           //自行车ID
 	private String ORDER_StartDate;   //开始日期
 	private String ORDER_EndtDate;    //结束日期
 	private String ORDER_Status;      //用户状态(0正常 1车辆故障停止 -1删除)  
@@ -33,11 +33,11 @@ public class PGNGMC_Order {
 	public void setUSER_ID(String uSER_ID) {
 		USER_ID = uSER_ID;
 	}
-	public String getBIKE_ID() {
-		return BIKE_ID;
+	public String getBIKE_CODE() {
+		return BIKE_CODE;
 	}
-	public void setBIKE_ID(String bIKE_ID) {
-		BIKE_ID = bIKE_ID;
+	public void setBIKE_CODE(String bIKE_CODE) {
+		BIKE_CODE = bIKE_CODE;
 	}
 	public String getORDER_StartDate() {
 		return ORDER_StartDate;

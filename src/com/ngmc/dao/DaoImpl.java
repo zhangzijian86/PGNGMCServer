@@ -307,6 +307,35 @@ public class DaoImpl
 		return user;		
 	}
 	
+	public boolean UpdateISDN(String isdnnumber,String phoneNumber)
+	{		
+		boolean b=false;
+		GetConn getConn=new GetConn();
+		int i = 0;
+		Connection conn=getConn.getConnection();
+		try {
+			PreparedStatement ps=conn.prepareStatement("update PG_USER "
+													+ "set USER_ISDN = ?  "													
+													+ "where USER_Mobile = ? "
+													);	
+			ps.setString(1,isdnnumber);		
+			ps.setString(2,phoneNumber);				
+			System.out.println("=UpdateISDN=sql=="+ps.toString());
+			i=ps.executeUpdate();
+			if (i>0)
+			{
+				b=true;
+			}
+			else
+			{
+				b=false;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		getConn.closeconn(conn);
+		return b;	
+	}
 	
 	
 	public boolean updateUser(Pgdr_User pgdr_user)
@@ -497,9 +526,9 @@ public class DaoImpl
 		ResultSet rs = null;
 		try {
 			PreparedStatement ps=conn.prepareStatement(""
-					+ "select ORDER_ID, ORDER_Code,USER_ID,BIKE_ID,ORDER_StartDate, "
+					+ "select ORDER_ID, ORDER_Code,USER_ID,BIKE_CODE,ORDER_StartDate, "
 					+ "ORDER_EndtDate,ORDER_Status,ORDER_Price,ORDER_PriceStatus "
-					+ "from PGNGMC_Order where ORDER_Status!= -1 and USER_ID = ?");
+					+ "from PG_Order where ORDER_Status!= -1 and USER_ID = ?");
 			ps.setString(1,userid);
 			rs=ps.executeQuery();
 			while (rs.next())
@@ -508,7 +537,7 @@ public class DaoImpl
 				order.setORDER_ID(rs.getString("ORDER_ID"));
 				order.setORDER_Code(rs.getString("ORDER_Code"));
 				order.setUSER_ID(rs.getString("USER_ID"));				
-				order.setBIKE_ID(rs.getString("BIKE_ID"));				
+				order.setBIKE_CODE(rs.getString("BIKE_CODE"));				
 				order.setORDER_StartDate(rs.getString("ORDER_StartDate"));
 				order.setORDER_EndtDate(rs.getString("ORDER_EndtDate"));
 				order.setORDER_Status(rs.getString("ORDER_Status"));
@@ -524,7 +553,7 @@ public class DaoImpl
 		return orderlist;		
 	}
 	
-	public boolean StartOrder(String userid,String bikeid)
+	public boolean StartOrder(String userid,String bikecode)
 	{
 		boolean b=false;
 		GetConn getConn=new GetConn();
@@ -534,11 +563,11 @@ public class DaoImpl
         String struuid = uuid.toString(); 
 		try {
 			PreparedStatement ps=conn.prepareStatement(""
-			+ "insert into PGNGMC_Order (ORDER_ID,USER_ID,BIKE_ID,ORDER_StartDate,ORDER_Status)"
+			+ "insert into PG_Order (ORDER_ID,USER_ID,BIKE_CODE,ORDER_StartDate,ORDER_Status)"
 			+ " values (?,?,?,now(),0)");
 			ps.setString(1,struuid);
 			ps.setString(2,userid);
-			ps.setString(3,bikeid);
+			ps.setString(3,bikecode);
 			i=ps.executeUpdate();
 			if (i>0)
 			{
