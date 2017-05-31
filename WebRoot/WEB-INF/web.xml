@@ -34,6 +34,25 @@
     <servlet-name>GetBikeStatus</servlet-name>
     <servlet-class>com.ngmc.servlet.GetBikeStatus</servlet-class>
   </servlet>
+  <servlet>
+    <description>This is the description of my J2EE component</description>
+    <display-name>This is the display name of my J2EE component</display-name>
+    <servlet-name>GetYZM</servlet-name>
+    <servlet-class>com.ngmc.servlet.GetYZM</servlet-class>
+  </servlet>
+  <servlet>
+    <description>This is the description of my J2EE component</description>
+    <display-name>This is the display name of my J2EE component</display-name>
+    <servlet-name>GetOrder</servlet-name>
+    <servlet-class>com.ngmc.servlet.GetOrder</servlet-class>
+  </servlet>
+  <servlet>
+    <description>This is the description of my J2EE component</description>
+    <display-name>This is the display name of my J2EE component</display-name>
+    <servlet-name>StartOrder</servlet-name>
+    <servlet-class>com.ngmc.servlet.StartOrder</servlet-class>
+  </servlet>
+  
 
   <servlet-mapping>
     <servlet-name>Login</servlet-name>
@@ -55,4 +74,16 @@
     <servlet-name>GetBikeStatus</servlet-name>
     <url-pattern>/GetBikeStatus</url-pattern>
   </servlet-mapping>  
+  <servlet-mapping>
+    <servlet-name>GetYZM</servlet-name>
+    <url-pattern>/GetYZM</url-pattern>
+  </servlet-mapping> 
+  <servlet-mapping>
+    <servlet-name>GetOrder</servlet-name>
+    <url-pattern>/GetOrder</url-pattern>
+  </servlet-mapping> 
+  <servlet-mapping>
+    <servlet-name>StartOrder</servlet-name>
+    <url-pattern>/StartOrder</url-pattern>
+  </servlet-mapping> 
 </web-app>

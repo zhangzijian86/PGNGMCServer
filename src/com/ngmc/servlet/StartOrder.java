@@ -3,6 +3,9 @@ package com.ngmc.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.gson.Gson;
 import com.ngmc.bean.PGNGMC_Bike;
+import com.ngmc.bean.PGNGMC_Order;
 import com.ngmc.bean.PGNGMC_User;
 import com.ngmc.bean.Pgdr_User;
 import com.ngmc.dao.DaoImpl;
@@ -20,7 +24,7 @@ import com.ngmc.json.JsonUtil;
 import com.sun.org.apache.xalan.internal.xsltc.compiler.sym;
 
 @SuppressWarnings("serial")
-public class Register extends HttpServlet {
+public class StartOrder extends HttpServlet {
 
 
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -37,24 +41,22 @@ public class Register extends HttpServlet {
 		request.setCharacterEncoding("utf-8");
 		response.setCharacterEncoding("utf-8");
 		PrintWriter out=response.getWriter();
-		String phoneNumber=request.getParameter("phoneNumber");
-		System.out.println("==Register=="+phoneNumber);
+		String userid=request.getParameter("userid");
+		String bikeid=request.getParameter("bikeid");
+		System.out.println("==StartOrder=userid="+userid);
+		System.out.println("==StartOrder=bikeid="+bikeid);
 		DaoImpl userDaoImpl=new DaoImpl();
-		PGNGMC_User usr=userDaoImpl.register(phoneNumber);
-		if (usr!=null) 
-		{
-			List<PGNGMC_User> PGU_List= new ArrayList<PGNGMC_User>();	
-			Gson gson=new Gson();
-			PGU_List.add(usr);
-			String jsonstring=gson.toJson(PGU_List);
-			out.write(jsonstring);
+		boolean flag=userDaoImpl.StartOrder(userid,bikeid);
+		if (flag) 
+		{					
+			out.write("ok");
 		}
 		else {			
 			out.write("no");
 		}
 		out.flush();
 		out.close();
-
 	}
-
+	
+	
 }

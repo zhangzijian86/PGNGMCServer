@@ -5,15 +5,19 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.ngmc.bean.PGNGMC_Bike;
-import com.ngmc.bean.PGNGMC_Bike_Position;
+
+import java.util.UUID;  
+
+import com.ngmc.bean.PGNGMC_Order;
+import com.ngmc.bean.PGNGMC_User;
 import com.ngmc.bean.Pgdr_User;
 import com.ngmc.db.GetConn;
-
-
 
 public class DaoImpl 
 {
@@ -238,31 +242,72 @@ public class DaoImpl
 //		return pdrlist;
 //	}
 	
-	public boolean register(Pgdr_User pgdr_user)
+	public PGNGMC_User register(String phoneNumber)
 	{
 		boolean b=false;
 		GetConn getConn=new GetConn();
 		int i = 0;
+		PGNGMC_User user = new PGNGMC_User();
 		Connection conn=getConn.getConnection();
+		ResultSet rs = null;
 		try {
-			PreparedStatement ps=conn.prepareStatement("insert into PGDR_USER (USER_MOBILE,USER_PASSWORD) values (?,?)");
-			ps.setString(1,pgdr_user.getUser_mobile());
-			ps.setString(2,pgdr_user.getUser_password());
-			i=ps.executeUpdate();
-			if (i>0)
+			PreparedStatement ps=conn.prepareStatement(""
+					+ "select USER_ID,USER_Code,USER_Name,USER_ISDN,USER_Mobile,USER_RegisterDate,"
+					+ "USER_Status,USER_DepositStatus,USER_DepositNumber from PG_USER where "
+					+ "USER_MOBILE=? and USER_Status!= -1");
+			ps.setString(1,phoneNumber);
+			rs=ps.executeQuery();
+			if (rs.next())
 			{
-				b=true;
+				user.setUSER_ID(rs.getString("USER_ID"));
+				user.setUSER_Code(rs.getString("USER_Code"));
+				user.setUSER_Name(rs.getString("USER_Name"));
+				user.setUSER_ISDN(rs.getString("USER_ISDN"));
+				user.setUSER_Mobile(rs.getString("USER_Mobile"));
+				user.setUSER_RegisterDate(rs.getString("USER_RegisterDate"));
+				user.setUSER_Status(rs.getString("USER_Status"));
+				user.setUSER_DepositStatus(rs.getString("USER_DepositStatus"));
+				user.setUSER_DepositNumber(rs.getString("USER_DepositNumber"));
+				getConn.closeconn(conn);
+				return user;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		UUID uuid = UUID.randomUUID();  
+        String struuid = uuid.toString(); 
+		try {
+			PreparedStatement ps=conn.prepareStatement(""
+					+ "insert into PG_USER (USER_ID,USER_Code,USER_Mobile,USER_Status) values (?,'',?,0)");
+			ps.setString(1,struuid);
+			ps.setString(2,phoneNumber);			
+			i=ps.executeUpdate();	
+			if (i>0)
+			{		
+				user.setUSER_ID(struuid);
+				user.setUSER_Code("");
+				user.setUSER_Name("");
+				user.setUSER_ISDN("");
+				user.setUSER_Mobile(phoneNumber);
+				SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
+				user.setUSER_RegisterDate(df.format(new Date()));
+				user.setUSER_Status("0");
+				user.setUSER_DepositStatus("0");
+				user.setUSER_DepositNumber("0");
+				return user;	
 			}
 			else
 			{
-				b=false;
+				return null;	
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		getConn.closeconn(conn);
-		return b;		
+		return user;		
 	}
+	
+	
 	
 	public boolean updateUser(Pgdr_User pgdr_user)
 	{
@@ -354,170 +399,6 @@ public class DaoImpl
 		return b;		
 	}
 	
-//	public boolean addRecycle(Ppdr_dailyrecycle pgdr_recycle)
-//	{
-//		System.out.println("====addRecycle=============33======");
-//		boolean b=false;
-//		GetConn getConn=new GetConn();
-//		int i = 0;
-//		Connection conn=getConn.getConnection();
-//		try {
-//			PreparedStatement ps=conn.prepareStatement("insert into PGDR_DAILYRECYCLE("
-//			+ "DAILYRECYCLE_USER_MOBILE,DAILYRECYCLE_DATE,DAILYRECYCLE_WEEK,"
-//			+ "DAILYRECYCLE_ISCYCLE,DAILYRECYCLE_CYCLETYPE,DAILYRECYCLE_ISVALID,"
-//			+ "DAILYRECYCLE_STATUS,DAILYRECYCLE_RECYCLINGMANPHONE,DAILYRECYCLE_FINISHTIME,"
-//			+ "DAILYRECYCLE_TYPE,DAILYRECYCLE_EXPLAIN,DAILYRECYCLE_ADDRESS,DAILYRECYCLE_NAME"
-//			+ ")values("
-//			+ "?,?,?,"
-//			+ "?,?,?,"
-//			+ "?,?,?,"
-//			+ "?,?,?,"
-//			+ "?)"
-//			);			
-//			if(pgdr_recycle.getDailyrecycle_user_mobile()!=null){
-//				ps.setString(1,pgdr_recycle.getDailyrecycle_user_mobile());
-//			}else{
-//				ps.setString(1,null);
-//			}
-//			if(pgdr_recycle.getDailyrecycle_date()!=null){
-//				ps.setString(2,pgdr_recycle.getDailyrecycle_date());		
-//			}else{
-//				ps.setString(2,null);
-//			}
-//			if(pgdr_recycle.getDailyrecycle_week()!=null){
-//				ps.setString(3,pgdr_recycle.getDailyrecycle_week());
-//			}else{
-//				ps.setString(3,null);
-//			}
-//			if(pgdr_recycle.getDailyrecycle_iscycle()!=null){
-//				ps.setString(4,pgdr_recycle.getDailyrecycle_iscycle());
-//			}else{
-//				ps.setString(4,null);
-//			}	
-//			if(pgdr_recycle.getDailyrecycle_cycletype()!=null){
-//				ps.setString(5,pgdr_recycle.getDailyrecycle_cycletype());
-//			}else{
-//				ps.setString(5,null);
-//			}	
-//			ps.setString(6,"1");
-//			ps.setString(7,"0");
-//			if(pgdr_recycle.getDailyrecycle_recyclingmanphone()!=null){
-//				ps.setString(8,pgdr_recycle.getDailyrecycle_recyclingmanphone());
-//			}else{
-//				ps.setString(8,null);
-//			}				
-//			if(pgdr_recycle.getDailyrecycle_finishtime()!=null){
-//				ps.setString(9,pgdr_recycle.getDailyrecycle_finishtime());
-//			}else{
-//				ps.setString(9,null);
-//			}
-//			if(pgdr_recycle.getDailyrecycle_type()!=null){
-//				ps.setString(10,pgdr_recycle.getDailyrecycle_type());
-//			}else{
-//				ps.setString(10,null);
-//			}
-//			if(pgdr_recycle.getDailyrecycle_explain()!=null){
-//				ps.setString(11,pgdr_recycle.getDailyrecycle_explain());
-//			}else{
-//				ps.setString(11,null);
-//			}	
-//			if(pgdr_recycle.getDailyrecycle_address()!=null){
-//				String address = pgdr_recycle.getDailyrecycle_address();
-//				System.out.println("====addRecycle=============55======");
-//				try {
-//					String addressstr = new String(address.getBytes("UTF-8"));
-//					ps.setString(12,addressstr);
-//					System.out.println("====UpdateUser=============66======"+addressstr);
-//				} catch (UnsupportedEncodingException e) {
-//					e.printStackTrace();
-//				}	
-//			}else{
-//				ps.setString(12,":");
-//			}
-//			if(pgdr_recycle.getDailyrecycle_name()!=null){
-//				ps.setString(13,pgdr_recycle.getDailyrecycle_name());
-//			}else{
-//				ps.setString(13,null);
-//			}	
-//			System.out.println("====addRecycle=============77====sql=="+ps.toString());
-//			i=ps.executeUpdate();
-//			if (i>0)
-//			{
-//				b=true;
-//			}
-//			else
-//			{
-//				b=false;
-//			}
-//		} catch (SQLException e) {
-//			e.printStackTrace();
-//		}
-//		getConn.closeconn(conn);
-//		return b;		
-//	}
-	
-	public List<Pgdr_User> selectAlluser ()
-	{
-		List<Pgdr_User> list=new ArrayList<Pgdr_User>();
-		GetConn getConn=new GetConn();	
-		Connection conn=getConn.getConnection();
-		try {
-			PreparedStatement ps=conn.prepareStatement("select * from PGDR_USER");
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) 
-            {
-            	Pgdr_User user=new Pgdr_User();
-				user.setUser_mobile(rs.getString(1));
-				list.add(user);
-			}
-		
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		getConn.closeconn(conn);
-		return list;
-	}
-//	public List<Ppdr_dailyrecycle> selectAllcontact (String username)
-//	{
-//		List<Ppdr_dailyrecycle> list=new ArrayList<Ppdr_dailyrecycle>();
-//		GetConn getConn=new GetConn();	
-//		Connection conn=getConn.getConnection();
-//		try {
-//			PreparedStatement ps=conn.prepareStatement(
-//					"select DAILYRECYCLE_ID ,"+
-//					       "DAILYRECYCLE_USER_MOBILE ,"+
-//					       "DAILYRECYCLE_DATE ,"+
-//					       "DAILYRECYCLE_WEEK ,"+
-//					       "DAILYRECYCLE_ISCYCLE ,"+
-//					       "DAILYRECYCLE_CYCLETYPE ,"+
-//					       "DAILYRECYCLE_ISVALID ,"+
-//					       "DAILYRECYCLE_STATUS ,"+
-//					       "DAILYRECYCLE_RECYCLINGMANPHONE ,"+
-//					       "DAILYRECYCLE_FINISHTIME ,"+
-//					       "from PGDR_DAILYRECYCLE where DAILYRECYCLE_USER_MOBILE=? or DAILYRECYCLE_RECYCLINGMANPHONE =? and DAILYRECYCLE_ISVALID = 1  order by DAILYRECYCLE_USER_MOBILE");
-//          ps.setString(1, username);
-//			ResultSet rs = ps.executeQuery();
-//          while (rs.next()){
-//            	Ppdr_dailyrecycle ppdr_dailyrecycle=new Ppdr_dailyrecycle();
-//            	ppdr_dailyrecycle.setDailyrecycle_id(rs.getString(0));
-//            	ppdr_dailyrecycle.setDailyrecycle_user_mobile(rs.getString(1));
-//            	ppdr_dailyrecycle.setDailyrecycle_date(rs.getString(2));
-//            	ppdr_dailyrecycle.setDailyrecycle_week(rs.getString(3));
-//            	ppdr_dailyrecycle.setDailyrecycle_iscycle(rs.getString(4));
-//            	ppdr_dailyrecycle.setDailyrecycle_cycletype(rs.getString(5));
-//            	ppdr_dailyrecycle.setDailyrecycle_isvalid(rs.getString(6));
-//            	ppdr_dailyrecycle.setDailyrecycle_status(rs.getString(7));
-//            	ppdr_dailyrecycle.setDailyrecycle_recyclingmanphone(rs.getString(8));
-//            	ppdr_dailyrecycle.setDailyrecycle_finishtime(rs.getString(9));				
-//				list.add(ppdr_dailyrecycle);
-//			}
-//		
-//		} catch (SQLException e) {
-//			e.printStackTrace();
-//		}
-//		getConn.closeconn(conn);
-//		return list;
-//	}
 	public boolean check(String user_mobile) 
 	{
 		System.out.println("====check=============00======");
@@ -604,6 +485,74 @@ public class DaoImpl
 		}
 		getConn.closeconn(conn);
 		return result;
+	}
+	
+	public  List<PGNGMC_Order>  GetOrder(String userid)
+	{
+		boolean b=false;
+		List<PGNGMC_Order> orderlist = new ArrayList<PGNGMC_Order>();
+		GetConn getConn=new GetConn();
+		int i = 0;		
+		Connection conn=getConn.getConnection();
+		ResultSet rs = null;
+		try {
+			PreparedStatement ps=conn.prepareStatement(""
+					+ "select ORDER_ID, ORDER_Code,USER_ID,BIKE_ID,ORDER_StartDate, "
+					+ "ORDER_EndtDate,ORDER_Status,ORDER_Price,ORDER_PriceStatus "
+					+ "from PGNGMC_Order where ORDER_Status!= -1 and USER_ID = ?");
+			ps.setString(1,userid);
+			rs=ps.executeQuery();
+			while (rs.next())
+			{
+				PGNGMC_Order order = new PGNGMC_Order();
+				order.setORDER_ID(rs.getString("ORDER_ID"));
+				order.setORDER_Code(rs.getString("ORDER_Code"));
+				order.setUSER_ID(rs.getString("USER_ID"));				
+				order.setBIKE_ID(rs.getString("BIKE_ID"));				
+				order.setORDER_StartDate(rs.getString("ORDER_StartDate"));
+				order.setORDER_EndtDate(rs.getString("ORDER_EndtDate"));
+				order.setORDER_Status(rs.getString("ORDER_Status"));
+				order.setORDER_Price(rs.getString("ORDER_Price"));
+				order.setORDER_PriceStatus(rs.getString("ORDER_PriceStatus"));
+				getConn.closeconn(conn);
+				orderlist.add(order);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}		
+		getConn.closeconn(conn);
+		return orderlist;		
+	}
+	
+	public boolean StartOrder(String userid,String bikeid)
+	{
+		boolean b=false;
+		GetConn getConn=new GetConn();
+		int i = 0;
+		Connection conn=getConn.getConnection();
+		UUID uuid = UUID.randomUUID();  
+        String struuid = uuid.toString(); 
+		try {
+			PreparedStatement ps=conn.prepareStatement(""
+			+ "insert into PGNGMC_Order (ORDER_ID,USER_ID,BIKE_ID,ORDER_StartDate,ORDER_Status)"
+			+ " values (?,?,?,now(),0)");
+			ps.setString(1,struuid);
+			ps.setString(2,userid);
+			ps.setString(3,bikeid);
+			i=ps.executeUpdate();
+			if (i>0)
+			{
+				b=true;
+			}
+			else
+			{
+				b=false;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		getConn.closeconn(conn);
+		return b;		
 	}
 	
 }

@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.gson.Gson;
 import com.ngmc.bean.PGNGMC_Bike;
+import com.ngmc.bean.PGNGMC_Order;
 import com.ngmc.bean.PGNGMC_User;
 import com.ngmc.bean.Pgdr_User;
 import com.ngmc.dao.DaoImpl;
@@ -20,7 +21,7 @@ import com.ngmc.json.JsonUtil;
 import com.sun.org.apache.xalan.internal.xsltc.compiler.sym;
 
 @SuppressWarnings("serial")
-public class Register extends HttpServlet {
+public class GetOrder extends HttpServlet {
 
 
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -37,16 +38,14 @@ public class Register extends HttpServlet {
 		request.setCharacterEncoding("utf-8");
 		response.setCharacterEncoding("utf-8");
 		PrintWriter out=response.getWriter();
-		String phoneNumber=request.getParameter("phoneNumber");
-		System.out.println("==Register=="+phoneNumber);
+		String userid=request.getParameter("userid");
+		System.out.println("==GetOrder=="+userid);
 		DaoImpl userDaoImpl=new DaoImpl();
-		PGNGMC_User usr=userDaoImpl.register(phoneNumber);
-		if (usr!=null) 
+		List<PGNGMC_Order> orderlist=userDaoImpl.GetOrder(userid);
+		if (orderlist!=null&&orderlist.size()>0) 
 		{
-			List<PGNGMC_User> PGU_List= new ArrayList<PGNGMC_User>();	
-			Gson gson=new Gson();
-			PGU_List.add(usr);
-			String jsonstring=gson.toJson(PGU_List);
+			Gson gson=new Gson();			
+			String jsonstring=gson.toJson(orderlist);
 			out.write(jsonstring);
 		}
 		else {			
@@ -54,7 +53,5 @@ public class Register extends HttpServlet {
 		}
 		out.flush();
 		out.close();
-
 	}
-
 }

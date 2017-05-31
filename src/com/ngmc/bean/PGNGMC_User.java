@@ -12,6 +12,9 @@ public class PGNGMC_User {
 	private String USER_DepositStatus;       //用户押金状态(0,未交 1,已交)
 	private String USER_DepositNumber;       //押金数量
 	
+	//select USER_ID,USER_Code,USER_Name,USER_ISDN,USER_Mobile,USER_RegisterDate,
+	//USER_Status,USER_DepositStatus,USER_DepositNumber,
+	
 	public String getUSER_ID() {
 		return USER_ID;
 	}
